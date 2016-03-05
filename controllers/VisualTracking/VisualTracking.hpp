@@ -32,7 +32,8 @@ class VisualTracking : public webots::Robot {
     
   private:
     int                              mTimeStep;
-    
+    bool                             getBallCenter(double &x, double &y);
+
     void                             myStep();
     void                             wait(int ms);
 

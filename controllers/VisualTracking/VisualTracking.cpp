@@ -121,75 +121,139 @@ void VisualTracking::checkIfFallen() {
   }
 }
 
-// function containing the main feedback loop
+
+
+bool VisualTracking::getBallCenter(double &x, double &y) {
+  static int width  = mCamera->getWidth();
+  static int height = mCamera->getHeight();
+  
+  const unsigned char *im = mCamera->getImage();
+  bool find = mVisionManager->getBallCenter(x, y, im);
+  
+  if(!find) {
+    x = 0.0;
+    y = 0.0;
+    return false;
+  } else {
+    x = 2.0 * x / width  - 1.0;
+    y = 2.0 * y / height - 1.0;
+    return true;
+  }
+}
+
+  
+  // function containing the main feedback loop
 void VisualTracking::run() {
-
-
-  double horizontal = 0.0;
-  double vertical = 0.0;
-  int width  = mCamera->getWidth();
-  int height = mCamera->getHeight();
-
-  cout << "---------------Visual Tracking---------------" << endl;
-  cout << "This example illustrates the possibilities of Vision Manager." << endl;
-  cout << "Move the red ball by dragging the mouse while keeping both shift key and mouse button pressed." << endl;
+	
+  cout << "---------------Demo of DARwIn-OP---------------" << endl;
+  cout << "This demo illustrates all the possibilities available for the DARwIn-OP." << endl;
+  cout << "This includes motion playback, walking algorithm and image processing." << endl;
 	
   // First step to update sensors values
   myStep();
-
-  // play the hello motion
+	
+  // set eye led to green
+  mEyeLED->set(0x00FF00);
+  
   mMotionManager->playPage(9); // init position
   wait(200);
+
+  // play the motion preparing the robot to walk
+  mGaitManager->start();
+  mGaitManager->step(mTimeStep);
   
-  //mGaitManager->start(); // init walking mode 
-        
-  wait(200);
-  
+  // main loop
+  double px = 0.0;
+  double py = 0.0;
+  int fup = 0;
+  int fdown = 0;
+  const double acc_tolerance = 80.0;
+  const double acc_step = 20;
   
   while (true) {
-    checkIfFallen();
+    double x, y, neckPosition, headPosition;
+    bool ballInFieldOfView = getBallCenter(x, y);
+    const double *acc = mAccelerometer->getValues();
     
-    mGaitManager->setXAmplitude(0.0);
-    mGaitManager->setAAmplitude(0.0);
-    
-    double x, y;
-    
-    bool ballInFieldOfView = mVisionManager->getBallCenter(x, y, mCamera->getImage());
-
-    
-    // Eye led indicate if ball has been found
-    if(ballInFieldOfView)
-      mEyeLED->set(0x00FF00);
+    // count how many steps the accelerometer
+    // says that the robot is down
+    if (acc[1] < 512.0 - acc_tolerance)
+      fup++;
     else
-      mEyeLED->set(0xFF0000);
-     
-    if(!ballInFieldOfView)
-    {
-     mGaitManager->start(); // init walking mode 
-     mGaitManager->setAAmplitude(-0.5);
-    }else{
-      mGaitManager->stop();
-    }
- 
+      fup = 0;
     
-    // Move the head in direction of the ball if it has been found
-    if(ballInFieldOfView) {
-      double dh = 0.1*((x / width ) - 0.5);
-      horizontal -= dh;
-      double dv = 0.1*((y / height ) - 0.5);
-      vertical -= dv;
-      horizontal = clamp(horizontal, minMotorPositions[18], maxMotorPositions[18]);
-      horizontal = clamp(horizontal, minMotorPositions[19], maxMotorPositions[19]);
-      mMotors[18]->setPosition(horizontal);
-      mMotors[19]->setPosition(vertical);
-    }
+    if (acc[1] > 512.0 + acc_tolerance)
+      fdown++;
+    else
+      fdown = 0;
     
-    mGaitManager->step(mTimeStep);
+    // the robot face is down
+    if (fup > acc_step) {
+      mMotionManager->playPage(1); // init position
+      mMotionManager->playPage(10); // f_up
+      mMotionManager->playPage(9); // walkready position
+      fup = 0;
+    }
+    // the back face is down
+    else if (fdown > acc_step) {
+      mMotionManager->playPage(1); // init position
+      mMotionManager->playPage(11); // b_up
+      mMotionManager->playPage(9); // walkready position
+      fdown = 0;
+    }
+    // if the ball is in the field of view,
+    // go in the direction of the ball and kick it
+    else if (ballInFieldOfView) {
+      // set eye led to blue
+      mEyeLED->set(0x0000FF);
+      
+      // compute the direction of the head
+      // the head move at maximum by 0.015 [rad] at each time step
+      x  = 0.015*x + px;
+      y  = 0.015*y + py;
+      px = x;
+      py = y;
+      neckPosition = clamp(-x, minMotorPositions[18], maxMotorPositions[18]);
+      headPosition = clamp(-y, minMotorPositions[19], maxMotorPositions[19]);
 
+      // go forwards and turn according to the head rotation
+      if (y < 0.1) // ball far away, go quickly
+        mGaitManager->setXAmplitude(1.0);
+      else // ball close, go slowly
+        mGaitManager->setXAmplitude(0.5);
+      mGaitManager->setAAmplitude(neckPosition);
+      mGaitManager->step(mTimeStep);
+      
+      // Move head
+      mMotors[18]->setPosition(neckPosition);
+      mMotors[19]->setPosition(headPosition);
+      
+      // if the ball is close enough
+      // kick the ball with the right foot
+      if (y > 0.35) {
+        mGaitManager->stop();
+      }
+    }
+    
+    // the ball is not in the field of view,
+    // search it by turning round and moving vertically the head 
+    else {
+      // set eye led to red
+      mEyeLED->set(0xFF0000);
+
+      // turn round
+      mGaitManager->setXAmplitude(0.0);
+      mGaitManager->setAAmplitude(-0.3);
+      mGaitManager->step(mTimeStep);
+      
+      // move the head vertically
+      headPosition = clamp(0.7*sin(2.0*getTime()), minMotorPositions[19], maxMotorPositions[19]);
+      mMotors[19]->setPosition(headPosition);
+    }
+    
     // step
     myStep();
   }
   }
-  
   
   

@@ -232,6 +232,12 @@ void VisualTracking::run() {
       // kick the ball with the right foot
       if (y > 0.35) {
         mGaitManager->stop();
+        wait(200);
+        mMotionManager->playPage(15); // squat down 
+        while(true) 
+        {
+           wait(500);
+        }
       }
     }
     

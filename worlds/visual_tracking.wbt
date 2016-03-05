@@ -1,0 +1,152 @@
+#VRML_SIM V8.3.2 utf8
+WorldInfo {
+  info [
+    "Robotis DARwIn-OP robot."
+    "The DARwIn-OP robot simulation model can be programmed using the DARwIn-OP motions files and the DARwIn-OP walk control library."
+  ]
+  title "Robotis DARwIn-OP"
+  basicTimeStep 16
+}
+Viewpoint {
+  orientation 0.058124 0.993678 0.096054 4.23129
+  position -2.97328 1.92933 -0.987862
+}
+Background {
+  skyColor [
+    1 1 1
+  ]
+}
+DirectionalLight {
+  ambientIntensity 1
+  direction -0.5 -2 -0.5
+  intensity 0.7
+  castShadows TRUE
+}
+DirectionalLight {
+  ambientIntensity 1
+  direction 0.5 -0.5 0.5
+  intensity 0.7
+}
+Table {
+  translation 0.0280818 -8.88178e-16 0.0187843
+}
+Darwin-op {
+  hidden position_0_0 -0.36
+  hidden position_0_1 -1.30328e-07
+  hidden position_0_2 1.3199e-07
+  hidden position_0_3 0.721868
+  hidden position_0_4 -0.844739
+  hidden linearVelocity_0 -6.45182e-10 1.27732e-11 -4.89961e-09
+  hidden angularVelocity_0 -8.93962e-10 2.00379e-07 1.54887e-10
+  hidden translation_9 -4.96428e-11 0.0509986 3.20484e-07
+  hidden rotation_9 -6.52089e-08 1 -1.13444e-08 -0.36
+  hidden position_9_0 -0.3475
+  hidden linearVelocity_9 1.55618e-09 1.12982e-11 9.71393e-09
+  hidden angularVelocity_9 -8.93975e-10 2.00379e-07 1.54929e-10
+  hidden translation_10 9.77817e-08 -1.20883e-06 2.59901e-07
+  hidden rotation_10 -1 -1.44532e-09 1.10477e-09 -1.1329
+  hidden linearVelocity_10 4.2111e-10 2.63375e-12 1.43748e-08
+  hidden angularVelocity_10 -8.93977e-10 2.00379e-07 1.54912e-10
+  hidden translation_14 0.037 -0.122194 -0.00500146
+  hidden rotation_14 -0.173513 -0.271249 -0.94674 -4.80494e-07
+  hidden position_14_0 -0.00614413
+  hidden linearVelocity_14 3.43424e-09 4.90687e-11 1.26445e-09
+  hidden angularVelocity_14 -7.65837e-10 2.00576e-07 -7.00552e-10
+  hidden translation_15 2.70428e-09 6.52106e-06 -1.50348e-06
+  hidden rotation_15 -1.34626e-05 -1.69286e-05 -1 -0.00614413
+  hidden position_15_0 0.631251
+  hidden linearVelocity_15 -1.50943e-09 1.2007e-11 -4.46498e-09
+  hidden angularVelocity_15 -5.6299e-10 2.0076e-07 -1.56587e-09
+  hidden translation_16 5.06696e-08 7.79907e-06 -1.7971e-06
+  hidden rotation_16 -1 -6.887e-08 7.48691e-07 0.631251
+  hidden position_16_0 -0.929214
+  hidden linearVelocity_16 -4.7852e-09 1.1467e-10 4.12322e-09
+  hidden angularVelocity_16 -4.57557e-10 2.00926e-07 -2.64557e-09
+  hidden translation_17 5.63009e-08 -0.0929918 3.52037e-06
+  hidden rotation_17 -1 -2.73474e-08 -5.148e-07 -0.929214
+  hidden position_17_0 -0.523738
+  hidden linearVelocity_17 -9.53488e-09 7.52152e-11 1.46081e-09
+  hidden angularVelocity_17 -3.97039e-10 2.01139e-07 -3.26227e-09
+  hidden translation_18 5.96291e-08 -0.0929918 -4.75073e-06
+  hidden rotation_18 1 -2.28326e-07 -8.52609e-07 -0.523738
+  hidden position_18_0 -0.0138224
+  hidden linearVelocity_18 -1.49003e-08 -7.13211e-11 -7.9448e-09
+  hidden angularVelocity_18 -3.79167e-10 2.01299e-07 -3.44283e-09
+  hidden translation_19 6.75345e-08 1.08009e-05 -5.64996e-09
+  hidden rotation_19 -5.98728e-07 1.34574e-08 1 -0.0138224
+  hidden linearVelocity_19 -1.69583e-08 -9.53616e-12 -5.24642e-09
+  hidden angularVelocity_19 -3.45943e-10 2.01459e-07 -3.58754e-09
+  hidden translation_20 -0.037 -0.122194 -0.00500147
+  hidden rotation_20 0.170102 -0.272384 -0.947033 4.84534e-07
+  hidden position_20_0 0.00614413
+  hidden linearVelocity_20 -2.71281e-09 -2.65822e-11 4.50063e-09
+  hidden angularVelocity_20 -1.03932e-09 2.00571e-07 1.01259e-09
+  hidden translation_21 -2.23779e-09 6.62945e-06 -1.5174e-06
+  hidden rotation_21 1.33083e-05 -1.71444e-05 -1 0.00614413
+  hidden position_21_0 -0.631251
+  hidden linearVelocity_21 9.3062e-10 1.2299e-11 1.35255e-10
+  hidden angularVelocity_21 -1.22546e-09 2.007e-07 1.87566e-09
+  hidden translation_22 -5.07784e-08 7.90746e-06 -1.81102e-06
+  hidden rotation_22 1 -6.88153e-08 7.55428e-07 -0.631251
+  hidden position_22_0 0.929214
+  hidden linearVelocity_22 6.605e-09 -9.37816e-11 1.00981e-08
+  hidden angularVelocity_22 -1.33024e-09 2.0084e-07 2.95507e-09
+  hidden translation_23 -5.63452e-08 -0.0929917 3.5731e-06
+  hidden rotation_23 1 -2.80736e-08 -5.19402e-07 0.929214
+  hidden position_23_0 0.523738
+  hidden linearVelocity_23 1.08594e-08 -5.37937e-11 8.86692e-09
+  hidden angularVelocity_23 -1.39031e-09 2.00938e-07 3.57171e-09
+  hidden translation_24 -5.96353e-08 -0.0929917 -4.79586e-06
+  hidden rotation_24 -1 -2.31162e-07 -8.60153e-07 0.523738
+  hidden position_24_0 0.0138224
+  hidden linearVelocity_24 1.39789e-08 9.51855e-11 8.57031e-10
+  hidden angularVelocity_24 -1.40815e-09 2.01095e-07 3.75227e-09
+  hidden translation_25 -6.74501e-08 1.09096e-05 5.04873e-09
+  hidden rotation_25 5.81406e-07 -1.59906e-08 1 0.0138224
+  hidden linearVelocity_25 1.69812e-08 1.24483e-11 5.43124e-09
+  hidden angularVelocity_25 -1.44116e-09 2.01252e-07 3.89708e-09
+  hidden translation_26 0.082 -1.93957e-06 4.45549e-07
+  hidden rotation_26 1 -2.61278e-08 -3.93044e-08 0.721868
+  hidden position_26_0 0.307178
+  hidden linearVelocity_26 1.49449e-08 7.17962e-11 8.72426e-09
+  hidden angularVelocity_26 -8.93907e-10 2.00379e-07 1.54859e-10
+  hidden translation_27 -6.17385e-11 -0.016001 1.45092e-06
+  hidden rotation_27 8.02259e-08 4.41144e-08 -1 -0.478222
+  hidden position_27_0 -0.516059
+  hidden linearVelocity_27 1.97985e-08 1.01639e-10 -1.87604e-09
+  hidden angularVelocity_27 -8.93913e-10 2.00379e-07 1.54834e-10
+  hidden translation_28 -1.24976e-07 -0.0600002 0.0160004
+  hidden rotation_28 1 2.30337e-09 4.23832e-09 -2.08686
+  hidden linearVelocity_28 2.27889e-08 1.10712e-10 3.65221e-09
+  hidden angularVelocity_28 -8.93924e-10 2.00379e-07 1.54833e-10
+  hidden translation_29 -0.082 -1.93957e-06 4.45549e-07
+  hidden rotation_29 -1 -2.43721e-08 -3.21778e-08 -0.844739
+  hidden position_29_0 -0.311786
+  hidden linearVelocity_29 -1.23083e-08 -5.2288e-11 1.19561e-08
+  hidden angularVelocity_29 -8.94014e-10 2.00379e-07 1.54841e-10
+  hidden translation_30 -6.18574e-11 -0.0160009 1.56777e-06
+  hidden rotation_30 -9.7139e-08 4.55158e-08 -1 0.473614
+  hidden position_30_0 0.511451
+  hidden linearVelocity_30 -1.97104e-08 -7.8044e-11 2.55641e-09
+  hidden angularVelocity_30 -8.93956e-10 2.00379e-07 1.54887e-10
+  hidden translation_31 1.0178e-07 -0.0600002 0.0160004
+  hidden rotation_31 -1 2.06546e-09 3.80053e-09 2.08225
+  hidden linearVelocity_31 -2.13893e-08 -8.91539e-11 7.2401e-09
+  hidden angularVelocity_31 -8.9397e-10 2.00379e-07 1.54889e-10
+  translation -0.306139 1.05722 0.239871
+  rotation -0.127077 0.985576 -0.111765 -1.45687
+  controller "VisualTracking"
+}
+Floor {
+  tileSize 1 1
+  texture [
+    "textures/carpet.jpg"
+  ]
+}
+DEF BALL Ball {
+  hidden linearVelocity_0 6.53532e-05 -1.18885e-08 -4.29728e-06
+  hidden angularVelocity_0 -0.000132408 -0.0002797 -0.00201286
+  translation -0.0061426 0.772457 0.0191408
+  rotation -0.0277349 0.999516 0.0140961 2.48962
+  color 1 0 0
+}

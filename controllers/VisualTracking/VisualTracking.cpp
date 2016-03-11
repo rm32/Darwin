@@ -16,6 +16,7 @@
 #include <iostream>
 #include <fstream>
 
+
 using namespace webots;
 using namespace managers;
 using namespace std;
@@ -144,16 +145,12 @@ bool VisualTracking::getBallCenter(double &x, double &y) {
   
   // function containing the main feedback loop
 void VisualTracking::run() {
-	
-  cout << "---------------Demo of DARwIn-OP---------------" << endl;
-  cout << "This demo illustrates all the possibilities available for the DARwIn-OP." << endl;
-  cout << "This includes motion playback, walking algorithm and image processing." << endl;
-	
+
   // First step to update sensors values
   myStep();
 	
   // set eye led to green
-  mEyeLED->set(0x00FF00);
+  //mEyeLED->set(0x00FF00);
   
   mMotionManager->playPage(9); // init position
   wait(200);
@@ -190,19 +187,25 @@ void VisualTracking::run() {
     // the robot face is down
     if (fup > acc_step) {
       mMotionManager->playPage(1); // init position
+      wait(50);
       mMotionManager->playPage(10); // f_up
+      wait(50);
       mMotionManager->playPage(9); // walkready position
+      wait(50);
       fup = 0;
     }
     // the back face is down
     else if (fdown > acc_step) {
       mMotionManager->playPage(1); // init position
+      wait(50);
       mMotionManager->playPage(11); // b_up
+      wait(50);
       mMotionManager->playPage(9); // walkready position
+      wait(50);
       fdown = 0;
     }
     // if the ball is in the field of view,
-    // go in the direction of the ball and kick it
+    // go in the direction of the ball and squat next to it
     else if (ballInFieldOfView) {
       // set eye led to blue
       mEyeLED->set(0x0000FF);
@@ -218,9 +221,9 @@ void VisualTracking::run() {
 
       // go forwards and turn according to the head rotation
       if (y < 0.1) // ball far away, go quickly
-        mGaitManager->setXAmplitude(1.0);
+        mGaitManager->setXAmplitude(0.1);
       else // ball close, go slowly
-        mGaitManager->setXAmplitude(0.5);
+      mGaitManager->setXAmplitude(0.1);
       mGaitManager->setAAmplitude(neckPosition);
       mGaitManager->step(mTimeStep);
       
@@ -229,10 +232,10 @@ void VisualTracking::run() {
       mMotors[19]->setPosition(headPosition);
       
       // if the ball is close enough
-      // kick the ball with the right foot
-      if (y > 0.35) {
+      // squat next to the ball
+      if (y > 1.8) {
         mGaitManager->stop();
-        wait(200);
+        wait(300);
         mMotionManager->playPage(15); // squat down 
         while(true) 
         {
@@ -249,11 +252,10 @@ void VisualTracking::run() {
 
       // turn round
       mGaitManager->setXAmplitude(0.0);
-      mGaitManager->setAAmplitude(-0.3);
+      mGaitManager->setAAmplitude(-0.22);
       mGaitManager->step(mTimeStep);
-      
       // move the head vertically
-      headPosition = clamp(0.7*sin(2.0*getTime()), minMotorPositions[19], maxMotorPositions[19]);
+      headPosition = clamp(0.7*sin(2.0*getTime()), minMotorPositions[19], minMotorPositions[19] +0.5);
       mMotors[19]->setPosition(headPosition);
     }
     

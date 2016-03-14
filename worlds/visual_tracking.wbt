@@ -8,8 +8,8 @@ WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation -0.0260147 0.960417 0.277349 2.96432
-  position 0.238421 2.33528 -2.7526
+  orientation 0.15847 0.958737 0.236029 4.2883
+  position -2.1586 1.74651 -0.67159
 }
 Background {
   skyColor [
@@ -29,6 +29,7 @@ DirectionalLight {
 }
 Table {
   translation -0.000173479 -8.88178e-16 0.0249988
+  rotation 1 0 0 6.28319
 }
 Darwin-op {
   hidden position_0_0 0.00307178
@@ -36,63 +37,21 @@ Darwin-op {
   hidden position_0_2 -0.00767936
   hidden position_0_3 0.720332
   hidden position_0_4 -0.841668
-  hidden translation_9 -5.16245e-06 0.051072 7.29423e-05
-  hidden rotation_9 0.000262466 1 -0.000101894 0.00307178
   hidden position_9_0 0.191986
-  hidden translation_10 -3.32681e-06 1.77931e-05 3.44943e-05
-  hidden rotation_10 -1 -0.000117193 -0.000238294 -0.593415
-  hidden translation_14 0.0370298 -0.122142 -0.00497969
-  hidden rotation_14 4.84322e-06 -1 -0.000126699 -0.0230384
   hidden position_14_0 -0.00767983
-  hidden translation_15 -2.61711e-06 3.18212e-05 -3.37171e-05
-  hidden rotation_15 -0.00357751 -0.000637182 -0.999993 -0.00767987
   hidden position_15_0 1.15038
-  hidden translation_16 6.71843e-06 6.84983e-05 -1.53956e-05
-  hidden rotation_16 -1 2.51377e-05 6.39602e-05 1.15038
-  hidden position_16_0 -2.25
-  hidden translation_17 7.50014e-06 -0.0929743 4.1871e-05
-  hidden rotation_17 -1 -4.6984e-06 1.1673e-05 -2.25
   hidden position_17_0 -1.241
-  hidden translation_18 -3.21198e-06 -0.0930161 -6.91793e-05
-  hidden rotation_18 1 9.85004e-06 8.00296e-06 -1.241
   hidden position_18_0 -0.0168942
-  hidden translation_19 1.28829e-05 7.63418e-05 7.36651e-06
-  hidden rotation_19 -0.00560969 0.000259823 0.999984 -0.0168947
-  hidden translation_20 -0.0370214 -0.122154 -0.00499454
-  hidden rotation_20 -6.17579e-05 -1 0.000329225 -0.00767939
   hidden position_20_0 0.0138234
-  hidden translation_21 4.90785e-06 2.47335e-05 -3.33766e-05
-  hidden rotation_21 -0.00387289 -0.00102262 -0.999992 0.0138235
   hidden position_21_0 -1.18417
-  hidden translation_22 1.56143e-05 6.04801e-05 1.17738e-05
-  hidden rotation_22 1 0.000119871 -0.000214688 -1.18417
-  hidden position_22_0 2.25
-  hidden translation_23 3.06315e-05 -0.0929787 2.27968e-06
-  hidden rotation_23 1 -4.06252e-05 2.03133e-05 2.25
   hidden position_23_0 1.22103
-  hidden translation_24 1.55895e-05 -0.0930252 -4.5042e-05
-  hidden rotation_24 -1 -4.00575e-05 -0.0002978 1.22103
   hidden position_24_0 0.0445403
-  hidden translation_25 8.78218e-07 6.46845e-05 5.4079e-06
-  hidden rotation_25 0.00212617 -0.000563676 0.999998 0.0445403
-  hidden translation_26 0.0820491 5.2435e-05 9.25249e-05
-  hidden rotation_26 1 0.000109762 0.000190962 0.720332
   hidden position_26_0 0.360934
-  hidden translation_27 2.86094e-05 -0.0160655 1.19762e-05
-  hidden rotation_27 3.14971e-05 -5.3472e-05 -1 -0.424466
   hidden position_27_0 -0.519131
-  hidden translation_28 2.09456e-05 -0.060002 0.0160405
-  hidden rotation_28 1 -7.61848e-06 -3.3279e-05 -2.08993
-  hidden translation_29 -0.0820585 5.66147e-05 5.21506e-05
-  hidden rotation_29 -1 0.000101612 8.38291e-05 -0.841668
   hidden position_29_0 -0.32868
-  hidden translation_30 -2.22717e-05 -0.0160773 1.35931e-05
-  hidden rotation_30 5.8394e-06 3.50009e-05 -1 0.45672
   hidden position_30_0 0.509915
-  hidden translation_31 -6.40252e-06 -0.0600255 0.0160501
-  hidden rotation_31 -1 -5.41224e-05 -6.78823e-05 2.08071
-  translation 0.382506 0.97331 -0.0462625
-  rotation 0.0553516 0.995444 -0.0776425 1.77839
+  translation 0.250847 0.97331 0.00430243
+  rotation 0.0655281 0.997009 -0.04097 2.56096
   controller "VisualTracking"
 }
 Floor {
@@ -102,7 +61,7 @@ Floor {
   ]
 }
 DEF BALL Ball {
-  translation 0.496619 0.759957 -0.0682158
+  translation -0.343839 0.759957 0.0173074
   rotation -2.02532e-05 1 -0.00011352 0.0432565
   color 1 0 0
   radius 0.02

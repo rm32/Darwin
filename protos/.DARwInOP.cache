@@ -1,0 +1,7 @@
+Webots Proto Cache File version 1.2
+protoFileHash: ba5c1fc6f93b3a254dc2f875d8080ed9
+containsDevices: 0
+baseType: Robot
+slotType: 
+parameters: translation,rotation,controller,controllerArgs,synchronization,selfCollision,name,plasticColor,cameraWidth,cameraHeight,jersey,channel,showRobotWindow,bodySlot,headSlot,leftFootSlot,rightFootSlot,leftHandSlot
+info: tags:\sdeprecated\nPlease\suse\sDarwin-op.proto\sinstead

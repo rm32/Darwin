@@ -1,0 +1,48 @@
+#VRML_SIM V8.1.0 utf8
+# tags: deprecated
+# Please use Darwin-op.proto instead
+
+PROTO DARwInOP [
+  field SFVec3f translation 0 0 0 
+  field SFRotation rotation 0 1 0 0 
+  field SFString controller "void"
+  field SFString controllerArgs ""
+  field SFBool synchronization TRUE 
+  field SFBool selfCollision FALSE 
+  field SFString name "DARwIn-OP"
+  field SFColor plasticColor 0.301961 0.301961 0.301961 
+  field SFInt32 cameraWidth 160 
+  field SFInt32 cameraHeight 120 
+  field SFNode jersey NULL
+  field SFInt32 channel 0 
+  field SFBool showRobotWindow FALSE
+  field MFNode bodySlot []
+  field MFNode headSlot []
+  field MFNode leftFootSlot []
+  field MFNode rightFootSlot []
+  field MFNode leftHandSlot []
+  field MFNode rightHandSlot []
+]
+{
+%{ io.stderr:write("Deprecated PROTO: please use Darwin-op.proto instead\n") }%
+  Darwin-op {
+    translation IS translation
+    rotation IS rotation
+    controller IS controller
+    controllerArgs IS controllerArgs
+    synchronization IS synchronization
+    selfCollision IS selfCollision
+    name IS name
+    plasticColor IS plasticColor
+    cameraWidth IS cameraWidth
+    cameraHeight IS cameraHeight
+    channel IS channel
+    showRobotWindow IS showRobotWindow
+    bodySlot IS bodySlot
+    headSlot IS headSlot
+    leftFootSlot IS leftFootSlot
+    rightFootSlot IS rightFootSlot
+    leftHandSlot IS leftHandSlot
+    rightHandSlot IS rightHandSlot
+  }
+}

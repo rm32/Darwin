@@ -1,3 +1,4 @@
+
 // Description:   Simple controller showing how to use vision manager
 
 #ifndef VISUALTRACKING_HPP
@@ -17,6 +18,7 @@ namespace webots {
   class Motor;
   class LED;
   class Camera;
+  class Display;
   class PositionSensor;
   class Accelerometer;
   class Gyro;
@@ -29,6 +31,9 @@ class VisualTracking : public webots::Robot {
     virtual                         ~VisualTracking();
     void                             run();
     void                             checkIfFallen();
+    void                              walkTowardsBall(double &x, double &y, double &px, double &py, double &neckPosition, double &headPosition);
+    void                            checkForBall(double headPosition);
+    void                            findHole();
     
   private:
     int                              mTimeStep;
@@ -42,6 +47,7 @@ class VisualTracking : public webots::Robot {
     webots::LED                     *mHeadLED;
     webots::Camera                  *mCamera;
     webots::PositionSensor *mPositionSensors[NMOTORS];
+    webots::Display                 *mDisplay;
     webots::Accelerometer           *mAccelerometer;
     
     managers::DARwInOPVisionManager *mVisionManager;

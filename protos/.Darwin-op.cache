@@ -1,0 +1,7 @@
+Webots Proto Cache File version 1.2
+protoFileHash: 8464a974598d1d3a0df8685b3b1e7264
+containsDevices: 1
+baseType: Robot
+slotType: 
+parameters: translation,rotation,controller,controllerArgs,synchronization,selfCollision,name,plasticColor,cameraWidth,cameraHeight,jersey,channel,showRobotWindow,bodySlot,headSlot,leftFootSlot,rightFootSlot,leftHandSlot,rightHandSlot
+info: Robotis'\sDARwIn-OP\sis\san\sopen\splatform,\sminiature\shumanoid\srobot\sused\sfor\sresearch,\seducation\sand\soutreach\nThe\sDARwIn-OP\smodel\scontains\sprincipally:\n-\sthe\s20\sDOF\n-\sLEDs\n-\saccelerometer\n-\sgyro\n-\scamera\n-\srealistic\sphysics\nMore\sinfo\shere:\shttp://support.robotis.com/ko/product/darwin-op.htm

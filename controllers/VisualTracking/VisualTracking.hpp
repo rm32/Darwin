@@ -35,8 +35,8 @@ public:
     
 private:
     int                              mTimeStep;
-    void                            lookAround(double headPosition, double min, double max);
-    int                             walkTowardsItem(double &x, double &y, double &px, double &py, double &neckPosition, double &headPosition);
+    void                            lookAround(double headPosition, double min, double max ,double speed);
+    int                             walkTowardsItem(double &x, double &y, double &px, double &py, double &neckPosition, double &headPosition, double offset);
     bool                            checkIfFallen(int fup, int fdown, const double acc_tolerance, const double acc_step);
     bool                            getBallCenter(double &x, double &y);
     bool                            walkTowardsBall(double &x, double &y, double &px, double &py, double &neckPosition, double &headPosition);

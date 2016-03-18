@@ -7,5 +7,5 @@ maximizedDockId: -1
 centralWidgetVisible: 1
 orthographicViewHeight: 1
 textFiles: 0 "controllers/VisualTracking/VisualTracking.cpp" "controllers/VisualTracking/VisualTracking.hpp"
-renderingDevicePerspectives: 132;1;0.791667;0.387958;0.793399
-renderingDevicePerspectives: 133;1;0.90625;0.76257;0.673289
+renderingDevicePerspectives: 132;1;1.05833;0.181875;0.842298
+renderingDevicePerspectives: 133;1;1.1;0.627561;0.828851

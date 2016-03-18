@@ -20,6 +20,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+
 #define WB_IMAGE_RGB  3
 #define WB_IMAGE_RGBA 4
 #define WB_IMAGE_ARGB 5
@@ -120,39 +121,6 @@ void VisualTracking::lookAround(double headPosition, double min, double max, dou
     mMotors[19]->setPosition(headPosition);
 }
 
-
-int VisualTracking::walkTowardsItem(double &x, double &y, double &px, double &py, double &neckPosition, double &headPosition, double offset)
-{
-    // set eye led to blue
-    mEyeLED->set(0x0000FF);
-    
-    // compute the direction of the head
-    // the head move at maximum by 0.015 [rad] at each time step
-    x  = 0.015*x + px;
-    y  = 0.015*y + py;
-    px = x;
-    py = y;
-    neckPosition = clamp(-x, minMotorPositions[18], maxMotorPositions[18]);
-    headPosition = clamp(-y, minMotorPositions[19], maxMotorPositions[19]);
-    
-    // go forwards and turn according to the head rotation
-    if (y < 0.1) // ball far away, go quickly
-        mGaitManager->setXAmplitude(0.3);
-    else // ball close, go slowly
-        mGaitManager->setXAmplitude(0.3);
-    
-    mGaitManager->setAAmplitude(neckPosition + offset);
-    mGaitManager->step(mTimeStep);
-    
-    // Move head
-    mMotors[18]->setPosition(neckPosition);
-    mMotors[19]->setPosition(headPosition);
-
-    return y;
-}
-
-
-
 //*****************
 //METHOD TO CHECK TO SEE IF HE HAS FALLEN
 //***************
@@ -229,22 +197,58 @@ bool VisualTracking::getBallCenter(double &x, double &y) {
 
 bool VisualTracking::walkTowardsBall(double &x, double &y, double &px, double &py, double &neckPosition, double &headPosition)
 {
-    double val = walkTowardsItem(x, y, px, py, neckPosition, headPosition, 0.6);
+      
+      // set eye led to blue
+      mEyeLED->set(0x0000FF);
+      // compute the direction of the head
+      // the head move at maximum by 0.015 [rad] at each time step
+      x  = 0.015*x + px;
+      y  = 0.015*y + py;
+      px = x;
+      py = y;
+      neckPosition = clamp(-x, minMotorPositions[18], maxMotorPositions[18]);
+      headPosition = clamp(-y, minMotorPositions[19], maxMotorPositions[19]);
 
-    
-    // if the ball is close enough
-    // squat next to the ball
-    // higher val number ->  close to ball 
-    if (val > 0.3) {
+      // go forwards and turn according to the head rotation
+      if (y < 0.1) // ball far away, go quickly
+        mGaitManager->setXAmplitude(1.0);
+      else // ball close, go slowly
+        mGaitManager->setXAmplitude(0.5);
+      mGaitManager->setAAmplitude(neckPosition + 0.65);
+      mGaitManager->step(mTimeStep);
+      
+      // Move head
+      mMotors[18]->setPosition(neckPosition);
+      mMotors[19]->setPosition(headPosition);
+      
+      // if the ball is close enough
+      // kick the ball with the right foot
+      if (y > 0.4) {
         mGaitManager->stop();
         wait(300);
         mMotionManager->playPage(15); // squat down
-        wait(10000);
+        wait(100);
+        touchBall();
+        // set eye led to green
+        mEyeLED->set(0x00FF00);
         return true; 
-    }
+      }
     
     return false; 
 }
+
+
+void VisualTracking::touchBall()
+{
+  mMotors[4]->setPosition(-1.65); // lower arm
+  mMotors[0]->setPosition(0.6);   // upper arm
+  mMotors[8]->setPosition(0.7);   // right leg
+  wait(10000);
+  
+  mMotionManager->playPage(9); // init position
+  wait(200);
+    
+} 
 
 
 
@@ -256,24 +260,21 @@ Mat filter(Mat &src)
     
     // Mat to hold the filtered image
     Mat filterSrc;
-    
-    /// Initialize arguments for the filter
-    Point anchor = Point(-1, -1);
-    
-    /// Kernel size for a normalized box filter
-    int kernel_size = 9;
-    
+
     /// Convert the image to Gray
     cvtColor(src, filterSrc, COLOR_BGRA2GRAY);
-    
+   // Canny( filterSrc, filterSrc, 100, 3*100, 3);
+
+    //threshold(filterSrc, filterSrc, 127.0, 255.0, THRESH_BINARY);	
     // smoothes out the image - Normalized Block Filter
-    blur(filterSrc, filterSrc, Size(kernel_size, kernel_size), anchor);
-    
+    blur(filterSrc, filterSrc, Size(7, 7));		
     //smoothes out the image - Gaussian Filter
-    //GaussianBlur(filterSrc, filterSrc, Size(kernel_size, kernel_size), 2, 2);
+   GaussianBlur(filterSrc, filterSrc, Size(9, 9), 2, 2);	
     return filterSrc;
 }
 
+int circleCount;
+int radius;
 
 Point circleDetection(Mat &filtered, Mat &orig)
 {
@@ -282,42 +283,85 @@ Point circleDetection(Mat &filtered, Mat &orig)
     
     /// Apply the Hough Transform to find the circles
     HoughCircles(filtered, circles, CV_HOUGH_GRADIENT, 1, 2, 76, 60, 0, 0);
-      /// Draw the circles detected
+           /// Draw the circles detected
      for (size_t i = 0; i < circles.size(); i++)
      {
      center.x = cvRound(circles[i][0]);
      center.y = cvRound(circles[i][1]);
-     int radius = cvRound(circles[i][2]);
+     radius = cvRound(circles[i][2]);
      // circle center
      circle(orig, center, 3, Scalar(0, 0, 255), -1, 8, 0);
      // circle outline
      circle(orig, center, radius, Scalar(0, 0, 255), 3, 8, 0);
      }
      
+    circleCount= circles.size();
+     
     return center;
 }
 
 
+/** @function thresh_callback */
+Point thresh_callback(Mat filtered)
+{
+RNG rng(12345);
+    Mat copy = filtered; 
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
 
+    /// Detect edges     
 
+    /// Find contours
+    findContours( copy, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+
+    /// Find the rotated rectangles and ellipses for each contour
+    vector<RotatedRect> minEllipse( contours.size() );
+    
+    
+    
+    if( contours[0].size() > 5 ){
+     minEllipse[0] = fitEllipse( Mat(contours[0]) ); 
+    }
+    
+    /// Draw contours + rotated rects + ellipses
+    for( int i = 0; i< contours.size(); i++ )
+    {
+        Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+        // ellipse
+        ellipse( copy, minEllipse[i], color, 2, 8 );
+     }
+     
+     RotatedRect rect = minEllipse[0];
+     Point p = rect.center;
+     return p;
+
+}
 
 //*********************
 // METHODS TO FIND HOLE
 //****************
 
 
-Point VisualTracking::applyFilter()
+Point VisualTracking::applyFilter(bool circle)
 {
     static int width  = mCamera->getWidth();
     static int height = mCamera->getHeight();
+    Point p;
     
     // get camera image
     Mat img = Mat(Size(width, height), CV_8UC4);
     img.data= (uchar*) mCamera->getImage();
     
-    Mat filteredImage = filter(img);
-    Point p = circleDetection(filteredImage , filteredImage) ;
-    
+    filteredImage = filter(img);
+    if(circle)
+    {
+       p = circleDetection(filteredImage , filteredImage) ;
+    }else{
+       circleDetection(filteredImage , filteredImage) ;
+       Mat image = filteredImage.clone(); 
+       p = thresh_callback(image);
+    }
+
     // convert image back to RGB so it can be shown in display
     cvtColor(filteredImage, filteredImage, COLOR_GRAY2RGB);
     
@@ -331,22 +375,93 @@ Point VisualTracking::applyFilter()
 }
 
 
-bool VisualTracking::walkTowardsHole(double &x, double &y, double &px, double &py, double &neckPosition, double &headPosition)
+void VisualTracking::armInHole()
+{
+while(1){
+  mMotors[4]->setPosition(-0.8); // lower arm
+  mMotors[0]->setPosition(1);   // upper arm
+  wait(10000);    
+  }
+} 
+
+
+bool found = false; 
+int countSteps = -1; 
+int x = 0;
+int currentRadius = 0;
+
+bool VisualTracking::walkTowardsHole(double &f, double &g, double &px, double &py, double &neckPosition, double &headPosition)
 {
 
-   double val = walkTowardsItem(x, y, px, py, neckPosition, headPosition, 0);
-    // if the ball is close enough
-    // squat next to the hole
-   /* if (val < 0.3) {
-        mGaitManager->stop();
-        wait(300); 
-        while(1){
-        mMotionManager->playPage(15); // squat down
-        wait(10000);        
+Point p;
+ 
+double width  = mCamera->getWidth();   
+double centerWidth = width/2 +25;
+
+  if(x == 0 && (!found))
+   {
+      mGaitManager->setYAmplitude(0);
+      mGaitManager->setXAmplitude(0);
+      mGaitManager->setAAmplitude(0);
+
+      p = applyFilter(false);
+      x = p.x;
+   }
+   
+   if((x > centerWidth + 2) && (!found))
+   {
+      //moveLeft
+      mGaitManager->setAAmplitude(0);
+      mGaitManager->setXAmplitude(0);
+      mGaitManager->setYAmplitude(1);
+    }else if((x < centerWidth -2)  && (!found) && x >0)
+    {
+      // moveRight
+      mGaitManager->setXAmplitude(0);
+      mGaitManager->setAAmplitude(0);
+      mGaitManager->setYAmplitude(-1);     
+    }else if(x ==0 && (!found))
+     {
+      mGaitManager->setYAmplitude(0);
+      mGaitManager->setXAmplitude(0);
+      mGaitManager->setAAmplitude(0);
+     }else{
+      
+     if(circleCount > 0){ 
+      if(radius > 39 && (radius > currentRadius))
+      {
+      cout << radius<< endl;
+        currentRadius = radius; 
+        countSteps = 0;
       }
      }
-    */
-    return false; 
+      
+     cout <<  countSteps << endl;
+         
+     if(countSteps > -1)
+     {
+       countSteps++;
+     }
+    
+     if(countSteps == 290)
+     {
+       mGaitManager->stop();
+       armInHole();
+     } 
+      
+      
+      mGaitManager->setYAmplitude(0);
+      mGaitManager->setAAmplitude(0);
+      mGaitManager->setXAmplitude(1.0);      
+      found = true; 
+    }  
+
+  
+    p = applyFilter(true); 
+    x =  p.x;  
+    mGaitManager->step(mTimeStep);
+
+    return true; 
 }
 
 void VisualTracking::findHole()
@@ -355,7 +470,7 @@ void VisualTracking::findHole()
     myStep();
     
     // set eye led to green
-    //mEyeLED->set(0x00FF00);
+    mEyeLED->set(0x00FF00);
     
     mMotionManager->playPage(9); // init position
     wait(200);
@@ -373,21 +488,17 @@ void VisualTracking::findHole()
     
     double headPosition = 0;
     bool holeFound = false;
-    Point p = applyFilter();
+    Point p = applyFilter(true);
     Point hole; 
-    
-    static int width  = mCamera->getWidth();
-    static int height = mCamera->getHeight();
-          
           
     while (true) {
     double x, y, neckPosition;         
          
-         if(p.x !=0 && p.y !=0)
+         if(!holeFound && p.x !=0 && p.y !=0)
          {
              holeFound = true;
              hole.x = p.x;
-             hole.y = p.y; 
+             hole.y = p.y;
          }
          
          if(checkIfFallen(fup, fdown, acc_tolerance, acc_step))
@@ -396,17 +507,16 @@ void VisualTracking::findHole()
         
          // if the hole is in the field of view, go in the direction of hole
          else if (holeFound) {
-          x = (double)hole.x ;
-          y = (double)hole.y;
-          
-          walkTowardsHole(x, y, px, py, neckPosition, headPosition);
+          x = 0; 
+          y=0; 
+          holeFound =  walkTowardsHole(x,y,px, py, neckPosition, headPosition);
          }
          
          // the ball is not in the field of view,
          // search it by turning round and moving vertically the head
          else {
-           lookAround(headPosition, maxMotorPositions[19] -0.3, maxMotorPositions[19], -0.05);
-           p = applyFilter();
+           lookAround(headPosition, maxMotorPositions[19] -0.3, maxMotorPositions[19], -0.2);
+           p = applyFilter(true);
          }
          
          // step
@@ -429,7 +539,7 @@ void VisualTracking::findHole()
 void VisualTracking::run() {
     
     // First step to update sensors values
-    myStep();
+  myStep();
     
     // set eye led to green
     //mEyeLED->set(0x00FF00);
@@ -451,7 +561,7 @@ void VisualTracking::run() {
     
     double headPosition = 0;
     
-   /* while (true) {
+    while (true) {
         double x, y, neckPosition;
         bool ballInFieldOfView = getBallCenter(x, y);
         if(checkIfFallen(fup, fdown, acc_tolerance, acc_step)){}
@@ -466,11 +576,22 @@ void VisualTracking::run() {
         // the ball is not in the field of view,
         // search it by turning round and moving vertically the head
         else {
-            lookAround(headPosition, minMotorPositions[19], minMotorPositions[19] +0.5, -0.22);
+            lookAround(headPosition, minMotorPositions[19], minMotorPositions[19] +0.5, -0.4);
         }
         // step
         myStep();
-    }*/
-    
-    findHole();
-}
+    } 
+
+    }
+
+// right shoulde:        mMotors[0]->setPosition(0.8);
+// left shoulder: mMotors[1]->setPosition(-1.2);
+// right shoulder out: mMotors[2]->setPosition(1.2);
+// left shoulder angle :   mMotors[3]->setPosition(0.8);
+ // right arm: mMotors[4]->setPosition(0.8);;
+// left arm down :  mMotors[5]->setPosition(0.8);
+// hip twist:     mMotors[6]->setPosition(0.8);
+// left knee:        mMotors[7]->setPosition(0.8);
+// right knee:        mMotors[8]->setPosition(0.8);
+
+

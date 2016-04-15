@@ -8,8 +8,8 @@ WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation -0.940744 -0.313187 -0.13006 0.826218
-  position -0.249739 2.97264 3.00375
+  orientation -0.771878 0.515411 0.372231 1.50613
+  position 1.62828 2.48385 0.793679
 }
 Background {
   skyColor [
@@ -27,29 +27,25 @@ DirectionalLight {
   direction 0.5 -0.5 0.5
   intensity 0.7
 }
-Table {
-  translation 0.118741 -1.33227e-15 0.0665762
-  rotation 1 0 0 6.28319
-}
 Darwin-op {
-  translation 0.20206 0.97331 -0.0178408
-  rotation -0.0553518 -0.995444 0.0776427 4.5048
-  controller "VisualTracking"
+  translation 0.321571 0.211754 0.00992201
+  rotation 0.0347478 0.987971 -0.150686 0.998658
+  controller "DarwinRobot"
 }
 Floor {
   tileSize 1 1
   texture [
-    "textures/carpet.jpg"
+    "textures/wood.jpg"
   ]
 }
 DEF BALL Ball {
-  translation -0.343839 0.759957 0.0173074
-  rotation -2.02532e-05 1 -0.00011352 0.0432565
+  translation -0.107815 0.00500061 -0.234872
+  rotation 0.0113902 0.804887 -0.593319 2.81147
   color 1 0 0
   radius 0.02
 }
 Solid {
-  translation 0.975079 0.65 0.0926662
+  translation 1.09915 -6.66134e-16 -0.415452
   rotation 0 1 0 1.5708
   scale 10 10 10
   children [

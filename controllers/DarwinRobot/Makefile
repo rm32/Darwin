@@ -1,8 +1,3 @@
-# Webots Makefile system 
-#
-# You may add some variable definitions hereafter to customize the build process
-# See documentation in $(WEBOTS_HOME_PATH)/resources/Makefile.include
-
 
 RESOURCES_PATH = $(WEBOTS_MODULES_PATH)/projects/robots/darwin-op
 INCLUDE = -I"$(RESOURCES_PATH)/libraries/managers/include" -I"$(RESOURCES_PATH)/libraries/darwin/darwin/Framework/include"  -I"$(WEBOTS_HOME)/include"
@@ -16,7 +11,4 @@ WEBOTS_HOME_PATH=$(subst $(space),\ ,$(strip $(subst \,/,$(WEBOTS_HOME))))
 
 
 include $(WEBOTS_HOME_PATH)/resources/Makefile.include
-
-
-
 

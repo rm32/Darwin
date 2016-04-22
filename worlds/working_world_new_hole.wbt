@@ -8,8 +8,8 @@ WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation -0.771878 0.515411 0.372231 1.50613
-  position 1.62828 2.48385 0.793679
+  orientation 0.646835 -0.731831 -0.214539 5.42903
+  position 2.66442 2.19139 1.88245
 }
 Background {
   skyColor [
@@ -28,9 +28,69 @@ DirectionalLight {
   intensity 0.7
 }
 Darwin-op {
-  translation 0.321571 0.211754 0.00992201
-  rotation 0.0347478 0.987971 -0.150686 0.998658
-  controller "DarwinRobot"
+  hidden position_0_0 2.19945e-08
+  hidden position_0_1 -0.0200005
+  hidden position_0_2 -0.0100003
+  hidden position_0_3 0.72
+  hidden position_0_4 -0.84
+  hidden translation_9 9.0135e-09 0.0509986 1.77677e-07
+  hidden rotation_9 0.99122 0.130869 -0.0188838 2.19945e-08
+  hidden position_9_0 0.19
+  hidden translation_10 7.80991e-09 -1.2307e-06 1.5395e-07
+  hidden rotation_10 -1 -1.14717e-10 3.29622e-10 -0.5954
+  hidden translation_15 0.0369979 -0.122193 -0.00500096
+  hidden rotation_15 -2.13414e-05 -1 -1.30833e-05 -0.0200001
+  hidden position_15_0 -0.0100004
+  hidden translation_16 -2.08751e-06 6.7796e-06 -1.02888e-06
+  hidden rotation_16 -4.23834e-05 -4.65144e-06 -1 -0.0100001
+  hidden position_16_0 1.15
+  hidden translation_17 -2.01159e-06 8.10142e-06 -1.1918e-06
+  hidden rotation_17 -1 -9.89238e-08 2.27478e-07 1.15
+  hidden position_17_0 -2.25
+  hidden translation_18 -2.00588e-06 -0.0929951 7.70657e-06
+  hidden rotation_18 -1 -1.14272e-07 -1.92547e-07 -2.25
+  hidden position_18_0 -1.23
+  hidden translation_19 -2.00251e-06 -0.0929969 -9.15847e-06
+  hidden rotation_19 1 -2.09602e-07 -3.07284e-07 -1.23
+  hidden position_19_0 -0.0199995
+  hidden translation_20 -1.99449e-06 1.0985e-05 -1.16295e-07
+  hidden rotation_20 -1.5783e-05 2.01072e-07 1 -0.0199996
+  hidden translation_21 -0.036998 -0.122194 -0.00500066
+  hidden rotation_21 1.64614e-05 -1 2.60461e-05 -0.01
+  hidden position_21_0 0.0200003
+  hidden translation_22 2.02949e-06 6.6088e-06 -6.67591e-07
+  hidden rotation_22 -8.16573e-06 -2.95782e-06 -1 0.0200002
+  hidden position_22_0 -1.15
+  hidden translation_23 1.86426e-06 7.94897e-06 -8.30445e-07
+  hidden rotation_23 1 -8.44589e-08 2.32107e-07 -1.15
+  hidden position_23_0 2.25
+  hidden translation_24 1.841e-06 -0.0929955 7.7148e-06
+  hidden rotation_24 1 -1.16051e-07 -1.86963e-07 2.25
+  hidden position_24_0 1.22
+  hidden translation_25 1.82726e-06 -0.0929966 -8.85828e-06
+  hidden rotation_25 -1 -2.1867e-07 -2.88159e-07 1.22
+  hidden position_25_0 0.0499995
+  hidden translation_26 1.7946e-06 1.07878e-05 1.14419e-07
+  hidden rotation_26 -4.86065e-06 -1.90836e-07 1 0.0499995
+  hidden translation_27 0.082 -1.97465e-06 2.47011e-07
+  hidden rotation_27 1 -1.98737e-08 -3.68767e-08 0.72
+  hidden position_27_0 0.36
+  hidden translation_28 1.12498e-08 -0.0160012 1.33573e-06
+  hidden rotation_28 7.45149e-08 4.28254e-08 -1 -0.4254
+  hidden position_28_0 -0.52
+  hidden translation_29 -1.24859e-07 -0.0600003 0.0160003
+  hidden rotation_29 1 2.10337e-09 4.20675e-09 -2.0908
+  hidden translation_30 -0.082 -1.97465e-06 2.47016e-07
+  hidden rotation_30 -1 -2.02519e-08 -3.42719e-08 -0.84
+  hidden position_30_0 -0.33
+  hidden translation_31 1.1249e-08 -0.016001 1.46818e-06
+  hidden rotation_31 -8.71192e-08 4.51463e-08 -1 0.4554
+  hidden position_31_0 0.51
+  hidden translation_32 1.19251e-07 -0.0600002 0.0160004
+  hidden rotation_32 -1 2.21937e-09 4.1444e-09 2.0808
+  translation 0.313322 0.234147 0.0341603
+  rotation 0.110539 0.991574 -0.0675436 1.00274
+  controller "PinInHoleController"
 }
 Floor {
   tileSize 1 1
@@ -39,8 +99,8 @@ Floor {
   ]
 }
 DEF BALL Ball {
-  translation -0.107815 0.00500061 -0.234872
-  rotation 0.0113902 0.804887 -0.593319 2.81147
+  translation 0.0805502 0.0199568 -0.760599
+  rotation 0.000133883 0.999976 -0.00697399 2.73345
   color 1 0 0
   radius 0.02
 }

@@ -14,8 +14,6 @@
 
 // custom classes
 #include "DarwinRobot.hpp"
-#include "RedPin.hpp"
-#include "Hole.hpp"
 
 //openCV classes
 #include <opencv2/core/core.hpp>
@@ -35,19 +33,22 @@ using namespace std;
 DarwinRobot::DarwinRobot(): Robot() {
     mTimeStep = getBasicTimeStep();
     
-    static const char *motorNames[NMOTORS] = {
-        "ShoulderR" /*ID1 */, "ShoulderL" /*ID2 */, "ArmUpperR" /*ID3 */, "ArmUpperL" /*ID4 */,
-        "ArmLowerR" /*ID5 */, "ArmLowerL" /*ID6 */, "PelvYR"    /*ID7 */, "PelvYL"    /*ID8 */,
-        "PelvR"     /*ID9 */, "PelvL"     /*ID10*/, "LegUpperR" /*ID11*/, "LegUpperL" /*ID12*/,
-        "LegLowerR" /*ID13*/, "LegLowerL" /*ID14*/, "AnkleR"    /*ID15*/, "AnkleL"    /*ID16*/,
-        "FootR"     /*ID17*/, "FootL"     /*ID18*/, "Neck"      /*ID19*/, "Head"      /*ID20*/
-    };
-    
+    // create and initiate the camera
     mCamera = getCamera("Camera");
-    mDisplay = createDisplay("new_display");
-    
     mCamera->enable(2*mTimeStep);
     
+    //create a display screen
+    mDisplay = createDisplay("new_display");
+    
+    // create and initialise the excelerometer
+    mAccelerometer = getAccelerometer("Accelerometer");
+    mAccelerometer->enable(mTimeStep);
+    
+    getGyro("Gyro")->enable(mTimeStep);
+    
+    keyboardEnable(mTimeStep);
+    
+    // set up the motors and the sensors
     for (int i=0; i<NMOTORS; i++) {
         mMotors[i] = getMotor(motorNames[i]);
         string sensorName = motorNames[i];
@@ -58,21 +59,16 @@ DarwinRobot::DarwinRobot(): Robot() {
         maxMotorPositions[i] = mMotors[i]->getMaxPosition();
     }
     
+    // set up vision manager with a red hue
     mVisionManager = new DARwInOPVisionManager(mCamera->getWidth(), mCamera->getHeight(), 355, 15, 60, 15, 0, 30);
     
-    mAccelerometer = getAccelerometer("Accelerometer");
-    mAccelerometer->enable(mTimeStep);
-    
-    getGyro("Gyro")->enable(mTimeStep);
-    
-    keyboardEnable(mTimeStep);
-    
+    // initialise the motion manager
     mMotionManager = new DARwInOPMotionManager(this);
+    
+    // initialise the gait manager
     mGaitManager = new DARwInOPGaitManager(this, "config.ini");
     
     setup();
-    
-    
 }
 
 
@@ -81,7 +77,55 @@ DarwinRobot::~DarwinRobot()
 }
 
 
+//------ SETUP --------
+
+
+void DarwinRobot::setup()
+{
+    faceUp = 0;
+    faceDown = 0;
+    acc_tolerance = 80.0;
+    acc_step = 20;
+    
+    // First step to update sensors values
+    incrementTimestep();
+    
+    mMotionManager->playPage(9); // init position
+    wait(200);
+    
+    // play the motion preparing the robot to walk
+    mGaitManager->start();
+    mGaitManager->step(mTimeStep);
+    wait(200);
+}
+
+
+
 // --------- GETTER FUNCTIONS ------------
+
+webots::Motor* DarwinRobot::getMotors(int i)
+{
+    return mMotors[i];
+}
+
+webots::Display* DarwinRobot::getDisplay()
+{
+    return mDisplay;
+}
+
+// --- Get max and min limb positions
+
+double DarwinRobot::getMaxLimbPos(int i)
+{
+    return maxMotorPositions[i];
+}
+
+double DarwinRobot::getMinLimbPos(int i)
+{
+    return minMotorPositions[i];
+}
+
+// ---- Get camera parameters and image ----
 
 int DarwinRobot::getCameraWidth()
 {
@@ -93,15 +137,12 @@ int DarwinRobot::getCameraHeight()
     return mCamera->getHeight();
 }
 
-
 const unsigned char* DarwinRobot::getImage()
 {
     return mCamera->getImage();
 }
 
-
-
-// TODO: WANT TO MOVE THIS FUNCTION TO PIN
+// Filters the camera image to make it black and white
 Mat DarwinRobot::getMat()
 {
     static int width  = mCamera->getWidth();
@@ -114,17 +155,10 @@ Mat DarwinRobot::getMat()
     cvtColor(img, img, COLOR_BGRA2GRAY);
     
     return img;
-    
 }
 
 
-
-webots::Display* DarwinRobot::getDisplay()
-{
-    return mDisplay;
-}
-
-
+// ------- Gets the Darwin-op managers --------------
 managers::DARwInOPVisionManager* DarwinRobot::getVisionManager()
 {
     return mVisionManager;
@@ -141,8 +175,12 @@ managers::DARwInOPMotionManager* DarwinRobot::getMotionManager()
 }
 
 
-void DarwinRobot::updateSensorValues(){
-    checkIfFallen(fup, fdown, acc_tolerance, acc_step);
+
+//-------------- HELPER METHODS -----
+
+// incremement the robot timestep and check if the robot has fallen over
+void DarwinRobot::incrementTimestep(){
+    checkIfFallen(faceUp, faceDown, acc_tolerance, acc_step);
     int ret = step(mTimeStep);
     if (ret == -1)
     {
@@ -151,18 +189,18 @@ void DarwinRobot::updateSensorValues(){
 }
 
 
-
+// waits a set number of miliseconds
 void DarwinRobot::wait(int ms) {
     double startTime = getTime();
     double s = (double) ms / 1000.0;
     while (s + startTime >= getTime())
     {
-        updateSensorValues();
+        incrementTimestep();
     }
 }
 
 
-
+// if the value is not in range it is clamped to either the minimum or maximum value
 double DarwinRobot::clamp(double value, double min, double max)
 {
     if(value < min)
@@ -177,8 +215,10 @@ double DarwinRobot::clamp(double value, double min, double max)
     
 }
 
-bool DarwinRobot::checkIfFallen(int &fup, int &fdown, const double acc_tolerance, const double acc_step)
-{    
+//--------------- ROBOT METHODS -----
+
+void DarwinRobot::checkIfFallen(int &fup, int &fdown, const double acc_tolerance, const double acc_step)
+{
     const double *acc = mAccelerometer->getValues();
     // count how many steps the accelerometer
     // says that the robot is down
@@ -194,32 +234,36 @@ bool DarwinRobot::checkIfFallen(int &fup, int &fdown, const double acc_tolerance
     }else{
         fdown = 0;
     }
-        
+    
     // the robot face is down
-    if (fup > acc_step) {
-      mMotionManager->playPage(1); // init position
-      mMotionManager->playPage(10); // f_up
-      mMotionManager->playPage(9); // walkready position
-      fup = 0;
+    if (faceUp > acc_step) {
+        mMotionManager->playPage(1); // init position
+        mMotionManager->playPage(10); // f_up
+        mMotionManager->playPage(9); // walkready position
+        faceUp = 0;
     }
     // the back face is down
-    else if (fdown > acc_step) {
-      mMotionManager->playPage(1); // init position
-      mMotionManager->playPage(11); // b_up
-      mMotionManager->playPage(9); // walkready position
-      fdown = 0;
-    }
-    else{
-        return false;
+    else if (faceDown > acc_step) {
+        mMotionManager->playPage(1); // init position
+        mMotionManager->playPage(11); // b_up
+        mMotionManager->playPage(9); // walkready position
+        faceDown = 0;
     }
 }
 
-bool DarwinRobot::findItem(Item* o){
-     fup = 0;
-     fdown = 0;
-     acc_tolerance = 80.0;
-     acc_step = 20;
-         printf("reset val 2 \n");
+
+
+// ---------------  TARGET METHODS -----
+
+// search around looking for the target
+bool DarwinRobot::findTarget(Target* o){
+    // reset values to check if the robot has fallen over
+    faceUp = 0;
+    faceDown = 0;
+    acc_tolerance = 80.0;
+    acc_step = 20;
+    
+    // keep searching till target is found
     while(!o->checkIfFound()){
         // tun round
         mGaitManager->setXAmplitude(0.0);
@@ -227,37 +271,42 @@ bool DarwinRobot::findItem(Item* o){
         mGaitManager->step(mTimeStep);
         
         // move the head vertically
-        double headPosition = clamp((0.7*sin(2.0*getTime())), o->getMinPos(19),o->getMaxPos(19));
+        double headPosition = clamp((0.7*sin(2.0*getTime())), o->getMinLimbPos(19),o->getMaxLimbPos(19));
         mMotors[19]->setPosition(headPosition);
         
         o->findLocation();
-        updateSensorValues();
+        incrementTimestep();
     }
     return true;
 }
 
-bool DarwinRobot::walkToItem(Item* o)
+
+// walk towards the target
+bool DarwinRobot::walkToTarget(Target* o)
 {
-    bool atItem = false;
-     fup = 0;
-     fdown = 0;
-     acc_tolerance = 80.0;
-     acc_step = 20;
-         printf("reset val 3 \n");
-    while(!atItem){
+    bool atTarget = false;
+    
+    // reset values to check if the robot has fallen over
+    faceUp = 0;
+    faceDown = 0;
+    acc_tolerance = 80.0;
+    acc_step = 20;
+    
+    // keep walking until robot is at the target
+    while(!atTarget){
         o->findLocation();
-        x = o->getX();
-        y = o->getY();
+        xAxis = o->getXAxis();
+        yAxis = o->getYAxis();
         
         // compute the direction of the head
         // the head move at maximum by 0.015 [rad] at each time step
-        x  = 0.015*x + px;
-        y  = 0.015*y + py;
-        px = x;
-        py = y;
+        xAxis  = 0.015*xAxis + px;
+        yAxis  = 0.015*yAxis + py;
+        px = xAxis;
+        py = yAxis;
         
-        double neckPosition =  clamp(-x, minMotorPositions[18], maxMotorPositions[18]);
-        double headPosition =  clamp(-y, minMotorPositions[19], maxMotorPositions[19]);
+        double neckPosition =  clamp(-xAxis, minMotorPositions[18], maxMotorPositions[18]);
+        double headPosition =  clamp(-yAxis, minMotorPositions[19], maxMotorPositions[19]);
         
         // go forwards and turn according to the head rotation
         mGaitManager->setXAmplitude(1);
@@ -268,74 +317,18 @@ bool DarwinRobot::walkToItem(Item* o)
         mMotors[18]->setPosition(neckPosition);
         mMotors[19]->setPosition(headPosition);
         
-        if(o->checkStop(x,y))
+        // if robot is at the target then stop
+        if(o->checkStop(xAxis,yAxis))
         {
             mGaitManager->stop();
             wait(300);
-            atItem = true;
+            atTarget = true;
             return true;
         }
         
-        updateSensorValues();
+        incrementTimestep();
     }
     
     return false;
 }
 
-
-double DarwinRobot::getMaxPos(int i)
-{
-    return maxMotorPositions[i];
-}
-
-double DarwinRobot::getMinPos(int i)
-{
-    return minMotorPositions[i];
-}
-
-
-void DarwinRobot::setup()
-{
-     fup = 0;
-     fdown = 0;
-     acc_tolerance = 80.0;
-     acc_step = 20;
-     
-     printf("reset val 1 \n");
-    notSet = true;
-    // First step to update sensors values
-    updateSensorValues();
-    
-    mMotionManager->playPage(9); // init position
-    wait(200);
-    
-    // play the motion preparing the robot to walk
-    mGaitManager->start();
-    mGaitManager->step(mTimeStep);
-    wait(200);
-}
-
-webots::Motor* DarwinRobot::getMotors(int i)
-{
-  return mMotors[i];
-}
-
-
-
-int main(int argc, char **argv)
-{
-    DarwinRobot* controller = new DarwinRobot();
-    RedPin* pin = new RedPin(controller);
-    controller->findItem(pin);
-    controller->walkToItem(pin);
-    pin->interactWithTarget();
-    controller->setup();
-    Hole* hole = new Hole(controller);
-    controller->findItem(hole);
-    controller->walkToItem(hole);
-    hole->interactWithTarget();
-    delete pin;
-    delete hole;
-    delete controller;
-    return 0;
-}

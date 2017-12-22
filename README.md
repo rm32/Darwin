@@ -1,4 +1,4 @@
-# Modelling, Simulation and control of a humanoid robot
+# Modelling, simulation and control of a humanoid robot
 
 ## Description
 The aim of this project was to develop a controller for a DARWINOP robot that allowed it to intert a pin into a hole. The developed code can be found in the "controllers/PinInHoleController" folder. The other code around this is automaticly generated from Webots.
@@ -23,7 +23,7 @@ As previously discussed, the aim of this project was to get the Darwin-op robot 
 * Hole always a circle (nothing else can be circular from eye level up)
 
 ## Design
-Once the use cases were stated it was then possible to start designing the system. The C++ program language was chosen as Webots supports this language and it allows for object orientated program to be used. The code was written in an object orientated design in order to provide modularity and reusability. It also allows for encapsulation allowing classes to hide and protect certain values.  
+Once the use cases were stated it was then possible to start designing the system. The C++ program language was chosen as Webots supports this language and it allows for object orientated program to be used. The code was written in an object orientated design in order to provide modularity and reusability. It also allows for encapsulation allowing classes to hide and protect certain values.
 
 Two main classes were defined; the robot class and the target class. Both the pin and the hole extend the Target class. Additional target items can be added, allowing the robot to find, walk and interact with different targets in different manners. Details of these classes can be seen below in the class diagram.
 
